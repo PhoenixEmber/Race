@@ -2,30 +2,31 @@ namespace Race.Lib;
 
 public class Liquid
 {
-    private string _name;
+    public string Name { get; private set; }
+    public int Position { get; private set; }
     private int _maxSpeed;
-    private int _position;
 
     public Liquid(string name, int maxSpeed)
     {
-        _name = name;
+        Name = name;
         _maxSpeed = maxSpeed;
     }
 
     public void Move()
     {
-        _position += RNG.Range(_maxSpeed, 1);
+        Position += RNG.Range(_maxSpeed, 1);
     }
 
     public void MoveBack()
     {
-        _position--;
+        Position -= RNG.Range(3, 1);
     }
 
     public void Reset()
     {
-        _position = 0;
+        Position = 0;
     }
+
 
     public static bool operator !(Liquid? liquid) => liquid == null;
 }
