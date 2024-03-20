@@ -2,6 +2,7 @@ namespace Race.Lib;
 
 public class RaceManager
 {
+    private Race? _currentRace;
     private Bookmaker _bookmaker = new();
 
     private readonly List<Liquid> _liquids =
@@ -20,17 +21,15 @@ public class RaceManager
         new Track("Track 4", 40)
     ];
 
-    public IEnumerable<Liquid> BeginRace(Track track, Liquid liquid)
+    public void BeginRace(Track track, Liquid liquid)
     {
-        var race = new Race(_liquids, track);
-        race.ConductRace();
-
-        
-        
-        return race.GetFinishedLiquids();
+        _currentRace = new Race(_liquids, track);
+        _currentRace.ConductRace();
     }
-    
+
+    public IEnumerable<string> GetTopThree() =>
+        _currentRace!.GetFinishedLiquids().Select(liquid => liquid.Name).Take(3);
+
     public IEnumerable<Liquid> GetLiquids() => _liquids;
     public IEnumerable<Track> GetTracks() => _tracks;
-    
 }

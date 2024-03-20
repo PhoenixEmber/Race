@@ -4,17 +4,17 @@ public class Liquid
 {
     public string Name { get; private set; }
     public int Position { get; private set; }
-    private int _maxSpeed;
+    public int MaxSpeed { get; private set; }
 
     public Liquid(string name, int maxSpeed)
     {
         Name = name;
-        _maxSpeed = maxSpeed;
+        MaxSpeed = maxSpeed;
     }
 
     public void Move()
     {
-        Position += RNG.Range(_maxSpeed, 1);
+        Position += RNG.Range(MaxSpeed, 1);
     }
 
     public void MoveBack()
