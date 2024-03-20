@@ -1,10 +1,11 @@
+using System.Threading.Channels;
+
 namespace Race.Lib;
 
 public class RaceManager
 {
     private Race? _currentRace;
-    private Bookmaker _bookmaker = new();
-
+    
     private readonly List<Liquid> _liquids =
     [
         new Liquid("Lava", 5),
@@ -26,6 +27,7 @@ public class RaceManager
         _currentRace = new Race(_liquids, track);
         _currentRace.ConductRace();
     }
+    
 
     public IEnumerable<string> GetTopThree() =>
         _currentRace!.GetFinishedLiquids().Select(liquid => liquid.Name).Take(3);

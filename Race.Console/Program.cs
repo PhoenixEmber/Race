@@ -1,47 +1,52 @@
 ﻿using Race.Lib;
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace Race.Console;
 
 public static class Program
 {
     private static readonly RaceManager RaceManager = new();
-
+    private static bool _isRunning = true;
     public static void Main()
     {
-        DisplayGameTitle();
-        var trackSelection = new SelectionPrompt<Track>().Title("Select a track")
-            .PageSize(5).AddChoices(RaceManager.GetTracks())
-            .UseConverter(track => $"{track.Name} length {track.Length}");
-
-        var selectedTrack = AnsiConsole.Prompt(trackSelection);
-
-        var liquidSelection = new SelectionPrompt<Liquid>().Title("Select a liquid").PageSize(5)
-            .AddChoices(RaceManager.GetLiquids()).UseConverter(liquid => $"{liquid.Name}, top speed {liquid.MaxSpeed}");
-
-        var selectedLiquid = AnsiConsole.Prompt(liquidSelection);
-
-        AnsiConsole.MarkupLine("[green]Balance: $100[/]");
-        AnsiConsole.Ask<int>($"How much would you like to bet on {selectedLiquid.Name}:");
-        AnsiConsole.Clear();
-
-        DisplayGameTitle();
-
-        RaceManager.BeginRace(selectedTrack, selectedLiquid);
-
-        var topThree = RaceManager.GetTopThree().Select(liquid => new Text($"{liquid}\n", new Style(Color.GreenYellow)).Centered())
-            .ToList();
-        var panel = new Panel(new Rows(topThree))
+        do
         {
-            Header = new PanelHeader("[yellow1]Top Three[/]", Justify.Center),
-            Border = BoxBorder.Rounded,
-            Width = 80
-        };
+            AnsiConsole.Clear();
+            DisplayGameTitle();
+            var trackSelection = new SelectionPrompt<Track>().Title("Select a track")
+                .PageSize(5).AddChoices(RaceManager.GetTracks())
+                .UseConverter(track => $"{track.Name} length {track.Length}");
 
-        AnsiConsole.Write(panel);
+            var selectedTrack = AnsiConsole.Prompt(trackSelection);
 
-        AnsiConsole.Ask<string>("");
+            var liquidSelection = new SelectionPrompt<Liquid>().Title("Select a liquid").PageSize(5)
+                .AddChoices(RaceManager.GetLiquids()).UseConverter(liquid => $"{liquid.Name}, top speed {liquid.MaxSpeed}");
+
+            var selectedLiquid = AnsiConsole.Prompt(liquidSelection);
+            AnsiConsole.Clear();
+
+            DisplayGameTitle();
+
+            RaceManager.BeginRace(selectedTrack, selectedLiquid);
+
+            var topThree = RaceManager.GetTopThree().Select(liquid => new Text($"{liquid}\n", new Style(Color.GreenYellow)).Centered())
+                .ToList();
+            var panel = new Panel(new Rows(topThree))
+            {
+                Header = new PanelHeader("[yellow1]Top Three[/]", Justify.Center),
+                Border = BoxBorder.Rounded,
+                Width = 200
+            };
+
+            AnsiConsole.Write(panel);
+
+           var result = AnsiConsole.Ask<string>("type exit to exit else enter to play again");
+           if (result.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
+           {
+               _isRunning = false;
+           }
+        } while (_isRunning);
+
     }
 
     private static void DisplayGameTitle()
